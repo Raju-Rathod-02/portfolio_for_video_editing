@@ -1,0 +1,27 @@
+{
+  "name": "raju-video-portfolio",
+  "version": "1.0.0",
+  "description": "Premium video editing portfolio website with admin panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [
+    "portfolio",
+    "video",
+    "cinema",
+    "editing"
+  ],
+  "author": "Raju Productions",
+  "license": "ISC",
+  "engines": {
+    "node": "14.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {}
+}

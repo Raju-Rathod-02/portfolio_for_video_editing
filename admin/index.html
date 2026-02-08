@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raju - Admin Panel | Video Editor Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+        }
+
+        .sidebar {
+            transition: all 0.3s ease;
+            left: 0;
+        }
+
+        .sidebar.collapsed {
+            left: -100%;
+        }
+
+        .main-content {
+            transition: all 0.3s ease;
+        }
+
+        .admin-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .admin-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .form-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #334155;
+            transition: all 0.3s ease;
+        }
+
+        .table-row:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        /* Mobile responsive tweaks */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95% !important;
+            }
+
+            .stat-box {
+                padding: 16px !important;
+            }
+
+            .admin-card {
+                padding: 12px !important;
+            }
+
+            label {
+                font-size: 0.875rem !important;
+            }
+
+            h2 {
+                font-size: 1.5rem !important;
+            }
+
+            .form-input {
+                font-size: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar fixed md:relative w-64 bg-slate-800 h-screen md:h-full overflow-y-auto z-40 transition-all duration-300" style="left: 0;">
+            <div class="p-4 md:p-6 border-b border-slate-700">
+                <div class="flex items-center space-x-2 mb-2">
+                    <i class="fas fa-film text-2xl gradient-text"></i>
+                    <span class="text-xl font-bold gradient-text">RAJU</span>
+                </div>
+                <p class="text-xs text-gray-400">Admin Dashboard</p>
+            </div>
+
+            <nav class="p-4 md:p-6 space-y-2 md:space-y-4">
+                <a href="#" onclick="showTab('dashboard'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link active text-sm md:text-base" data-tab="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" onclick="showTab('videos'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link text-sm md:text-base" data-tab="videos">
+                    <i class="fas fa-video"></i>
+                    <span>Videos</span>
+                </a>
+                <a href="#" onclick="showTab('portfolio'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link text-sm md:text-base" data-tab="portfolio">
+                    <i class="fas fa-images"></i>
+                    <span>Portfolio Items</span>
+                </a>
+                <a href="#" onclick="showTab('services'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link text-sm md:text-base" data-tab="services">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Services</span>
+                </a>
+                <a href="#" onclick="showTab('contacts'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link text-sm md:text-base" data-tab="contacts">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Messages</span>
+                </a>
+                <a href="#" onclick="showTab('settings'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link text-sm md:text-base" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="p-6 border-t border-slate-700">
+                <button onclick="logoutUser()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition text-red-400 font-semibold">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content flex-1 overflow-auto">
+            <!-- Top Bar -->
+            <div class="bg-slate-800 border-b border-slate-700 px-3 md:px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-0 sticky top-0 z-30">
+                <div class="flex items-center space-x-3 md:space-x-4 w-full md:w-auto">
+                    <button id="toggle-sidebar" class="md:hidden text-2xl" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="page-title" class="text-xl md:text-2xl font-bold">Dashboard</h1>
+                </div>
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full md:w-auto">
+                    <div class="relative w-full md:w-auto">
+                        <input type="text" placeholder="Search..." class="form-input px-3 md:px-4 py-2 rounded-lg w-full md:w-48 text-sm" />
+                    </div>
+                    <div class="flex items-center space-x-2 md:space-x-3 bg-slate-700 px-2 md:px-4 py-2 rounded-lg hover:bg-slate-600 transition cursor-pointer relative group text-xs md:text-base">
+                        <i class="fas fa-user-circle text-lg md:text-2xl"></i>
+                        <span id="admin-email" class="text-xs md:text-sm">Admin</span>
+                        <div class="hidden group-hover:block absolute right-0 top-full mt-2 bg-slate-800 rounded-lg border border-slate-700 w-40 md:w-48 p-2 z-50">
+                            <a href="#" onclick="showTab('settings')" class="block px-3 md:px-4 py-2 hover:bg-slate-700 rounded text-xs md:text-sm">Profile Settings</a>
+                            <a href="#" onclick="openChangePasswordModal()" class="block px-3 md:px-4 py-2 hover:bg-slate-700 rounded text-xs md:text-sm">Change Password</a>
+                            <hr class="my-2 border-slate-600">
+                            <a href="#" onclick="logoutUser()" class="block px-3 md:px-4 py-2 hover:bg-red-500/20 text-red-400 rounded text-xs md:text-sm">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-4 md:p-8">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Welcome to Admin Panel</h2>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-box">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Upload Videos</p>
+                                    <h3 class="text-3xl font-bold gradient-text mt-2" id="stat-videos">0</h3>
+                                </div>
+                                <i class="fas fa-video text-2xl text-red-400"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-box">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Active Services</p>
+                                    <h3 class="text-3xl font-bold gradient-text mt-2" id="stat-services">0</h3>
+                                </div>
+                                <i class="fas fa-briefcase text-2xl text-purple-400"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-box">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Contact Messages</p>
+                                    <h3 class="text-3xl font-bold gradient-text mt-2" id="stat-contacts">0</h3>
+                                </div>
+                                <i class="fas fa-envelope text-2xl text-pink-400"></i>
+                            </div>
+                        </div>
+
+                        <div class="stat-box">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-gray-400 text-sm">Total Views</p>
+                                    <h3 class="text-3xl font-bold gradient-text mt-2" id="stat-views">2M+</h3>
+                                </div>
+                                <i class="fas fa-eye text-2xl text-cyan-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
+                            <div class="space-y-3">
+                                <button onclick="showTab('videos'); openUploadVideoModal()" class="w-full btn-primary text-white py-2 rounded-lg font-semibold hover:text-white">
+                                    <i class="fas fa-video mr-2"></i> Upload Video
+                                </button>
+                                <button onclick="showTab('portfolio'); openAddPortfolioModal()" class="w-full btn-primary text-white py-2 rounded-lg font-semibold hover:text-white">
+                                    <i class="fas fa-plus mr-2"></i> Add Portfolio Item
+                                </button>
+                                <button onclick="showTab('services'); openAddServiceModal()" class="w-full btn-primary text-white py-2 rounded-lg font-semibold hover:text-white">
+                                    <i class="fas fa-plus mr-2"></i> Add Service
+                                </button>
+                                <button onclick="showTab('contacts')" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg font-semibold transition">
+                                    <i class="fas fa-envelope mr-2"></i> View Messages
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="admin-card p-6 rounded-xl md:col-span-2">
+                            <h3 class="text-lg font-bold mb-4">Recent Activity</h3>
+                            <div id="recent-activity" class="space-y-3 text-sm">
+                                <p class="text-gray-400">No recent activity yet. Start managing your portfolio!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Videos Tab -->
+                <div id="videos-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold">Video Management</h2>
+                        <button onclick="openUploadVideoModal()" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                            <i class="fas fa-upload mr-2"></i> Upload Video
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="videos-grid">
+                        <div class="admin-card p-6 rounded-xl text-center text-gray-400">
+                            No videos uploaded yet. Click "Upload Video" to get started.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Tab -->
+                <div id="portfolio-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold">Portfolio Management</h2>
+                        <button onclick="openAddPortfolioModal()" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                            <i class="fas fa-plus mr-2"></i> Add Item
+                        </button>
+                    </div>
+
+                    <div class="admin-card rounded-xl overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left font-semibold">Title</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Description</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Tags</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolio-list">
+                                <tr class="table-row">
+                                    <td colspan="4" class="px-6 py-8 text-center text-gray-400">
+                                        No portfolio items yet. Click "Add Item" to create one.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Services Tab -->
+                <div id="services-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold">Services Management</h2>
+                        <button onclick="openAddServiceModal()" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                            <i class="fas fa-plus mr-2"></i> Add Service
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="services-list">
+                        <div class="admin-card p-6 rounded-xl text-center text-gray-400">
+                            No services yet. Click "Add Service" to get started.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contacts Tab -->
+                <div id="contacts-tab" class="tab-content hidden">
+                    <h2 class="text-3xl font-bold mb-8">Contact Messages</h2>
+
+                    <div class="admin-card rounded-xl overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left font-semibold">Name</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Email</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Message</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Date</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contacts-list">
+                                <tr class="table-row">
+                                    <td colspan="5" class="px-6 py-8 text-center text-gray-400">
+                                        No messages yet.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content hidden">
+                    <h2 class="text-3xl font-bold mb-8">Settings</h2>
+
+                    <div class="admin-card p-8 rounded-xl max-w-2xl">
+                        <h3 class="text-xl font-bold mb-6">Profile Settings</h3>
+                        
+                        <form id="settings-form" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Company Name</label>
+                                <input type="text" value="Raju Productions" class="form-input w-full px-4 py-2 rounded-lg text-white" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Email</label>
+                                <input type="email" value="contact@raju.com" class="form-input w-full px-4 py-2 rounded-lg text-white" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Phone</label>
+                                <input type="tel" value="+1 (555) 123-4567" class="form-input w-full px-4 py-2 rounded-lg text-white" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Location</label>
+                                <input type="text" value="Los Angeles, CA" class="form-input w-full px-4 py-2 rounded-lg text-white" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">About</label>
+                                <textarea class="form-input w-full px-4 py-2 rounded-lg text-white h-24">Professional video editor with 15+ years of experience...</textarea>
+                            </div>
+
+                            <button type="submit" class="btn-primary px-8 py-3 rounded-lg font-semibold hover:text-white">
+                                Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Upload Modal -->
+    <div id="video-upload-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-6 border-b border-slate-700">
+                <h2 class="text-2xl font-bold">Upload Video</h2>
+                <button onclick="closeModal('video-upload-modal')" class="text-2xl hover:text-gray-400"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="video-upload-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video Title</label>
+                    <input type="text" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. Corporate Promo Video" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video Description</label>
+                    <textarea required class="form-input w-full px-4 py-2 rounded-lg text-white h-24" placeholder="Describe your video project..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video URL or Embed Code</label>
+                    <textarea class="form-input w-full px-4 py-2 rounded-lg text-white h-20" placeholder="Paste YouTube/Vimeo embed URL or embed code"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video File (MP4)</label>
+                    <input type="file" accept="video/mp4,video/webm" class="form-input w-full px-4 py-2 rounded-lg text-white file:px-4 file:py-2 file:rounded file:bg-blue-500 file:text-white" id="video-file" />
+                    <p class="text-xs text-gray-400 mt-2">Max file size: 1GB. Supported formats: MP4, WebM</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tags (comma separated)</label>
+                    <input type="text" class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. Corporate, 4K, Cinematic" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Thumbnail URL</label>
+                    <input type="url" class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="https://example.com/thumbnail.jpg" />
+                </div>
+                <button type="submit" class="w-full btn-primary py-2 rounded-lg font-semibold hover:text-white">
+                    Upload Video
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Video Modal -->
+    <div id="edit-video-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-6 border-b border-slate-700">
+                <h2 class="text-2xl font-bold">Edit Video</h2>
+                <button onclick="closeModal('edit-video-modal')" class="text-2xl hover:text-gray-400"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="edit-video-form" class="p-6 space-y-4">
+                <input type="hidden" id="edit-video-id" />
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video Title</label>
+                    <input type="text" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. Corporate Promo Video" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video Description</label>
+                    <textarea required class="form-input w-full px-4 py-2 rounded-lg text-white h-24" placeholder="Describe your video project..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video URL or Embed Code</label>
+                    <textarea class="form-input w-full px-4 py-2 rounded-lg text-white h-20" placeholder="Paste YouTube/Vimeo embed URL or embed code"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tags (comma separated)</label>
+                    <input type="text" class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. Corporate, 4K, Cinematic" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Thumbnail Color</label>
+                    <input type="color" class="form-input w-full px-4 py-2 rounded-lg text-white h-12" />
+                </div>
+                <button type="submit" class="w-full btn-primary py-2 rounded-lg font-semibold hover:text-white">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="change-password-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-6 border-b border-slate-700">
+                <h2 class="text-2xl font-bold">Change Password</h2>
+                <button onclick="closeModal('change-password-modal')" class="text-2xl hover:text-gray-400"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="change-password-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Current Password</label>
+                    <input type="password" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="Enter current password" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">New Password</label>
+                    <input type="password" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="Enter new password" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Confirm New Password</label>
+                    <input type="password" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="Confirm new password" />
+                </div>
+                <button type="submit" class="w-full btn-primary py-2 rounded-lg font-semibold hover:text-white">
+                    Update Password
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Portfolio Modal -->
+    <div id="portfolio-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-6 border-b border-slate-700">
+                <h2 class="text-2xl font-bold">Add Portfolio Item</h2>
+                <button onclick="closeModal('portfolio-modal')" class="text-2xl hover:text-gray-400"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="portfolio-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Title</label>
+                    <input type="text" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="Project title" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Description</label>
+                    <textarea required class="form-input w-full px-4 py-2 rounded-lg text-white h-24" placeholder="Project description"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tags (comma separated)</label>
+                    <input type="text" class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. Corporate, 4K, Cinematic" />
+                </div>
+                <button type="submit" class="w-full btn-primary py-2 rounded-lg font-semibold hover:text-white">
+                    Add to Portfolio
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Service Modal -->
+    <div id="service-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-6 border-b border-slate-700">
+                <h2 class="text-2xl font-bold">Add Service</h2>
+                <button onclick="closeModal('service-modal')" class="text-2xl hover:text-gray-400"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="service-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Service Name</label>
+                    <input type="text" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. Video Editing" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Description</label>
+                    <textarea required class="form-input w-full px-4 py-2 rounded-lg text-white h-20" placeholder="Service description"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Price</label>
+                    <input type="text" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. $1000 - $2500" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Icon Class</label>
+                    <input type="text" required class="form-input w-full px-4 py-2 rounded-lg text-white" placeholder="e.g. fas fa-cut" />
+                </div>
+                <button type="submit" class="w-full btn-primary py-2 rounded-lg font-semibold hover:text-white">
+                    Add Service
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

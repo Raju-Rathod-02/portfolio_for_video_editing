@@ -1,0 +1,122 @@
+{
+  "hero": {
+    "title": "Transform Your Vision Into Reality",
+    "subtitle": "Award-winning video editor creating cinematic masterpieces for brands and visionaries worldwide"
+  },
+  "stats": [
+    {
+      "id": 1,
+      "value": "500+",
+      "label": "Projects Completed"
+    },
+    {
+      "id": 2,
+      "value": "150+",
+      "label": "Satisfied Clients"
+    },
+    {
+      "id": 3,
+      "value": "15",
+      "label": "Years Experience"
+    },
+    {
+      "id": 4,
+      "value": "10M+",
+      "label": "Video Views"
+    }
+  ],
+  "portfolio": {
+    "title": "Featured Works",
+    "items": [
+      {
+        "id": 1,
+        "title": "Corporate Promo",
+        "description": "High-impact promotional video for Fortune 500 brand",
+        "tags": [
+          "Corporate",
+          "4K"
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Music Video",
+        "description": "Cinematic music video for Grammy-nominated artist",
+        "tags": [
+          "Music",
+          "Cinematic"
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Documentary",
+        "description": "Award-winning documentary with stunning visuals",
+        "tags": [
+          "Documentary",
+          "8K"
+        ]
+      }
+    ]
+  },
+  "services": {
+    "title": "Premium Services",
+    "items": [
+      {
+        "id": 1,
+        "icon": "fa-cut",
+        "title": "Video Editing",
+        "description": "Professional editing with color grading, transitions, and effects",
+        "price": "$2000 - $5000"
+      },
+      {
+        "id": 2,
+        "icon": "fa-palette",
+        "title": "Color Grading",
+        "description": "Cinematic color correction and visual enhancement",
+        "price": "$1500 - $3000"
+      },
+      {
+        "id": 3,
+        "icon": "fa-magic",
+        "title": "VFX & Animation",
+        "description": "Custom visual effects and motion graphics",
+        "price": "$3000 - $8000"
+      },
+      {
+        "id": 4,
+        "icon": "fa-volume-up",
+        "title": "Sound Design",
+        "description": "Professional audio mixing and sound effects",
+        "price": "$1000 - $2500"
+      },
+      {
+        "id": 5,
+        "icon": "fa-video",
+        "title": "Motion Graphics",
+        "description": "Engaging animated graphics and title sequences",
+        "price": "$1500 - $4000"
+      },
+      {
+        "id": 6,
+        "icon": "fa-film",
+        "title": "Full Production",
+        "description": "Complete video production from concept to delivery",
+        "price": "Custom Pricing"
+      }
+    ]
+  },
+  "about": {
+    "title": "About Me",
+    "content1": "With over 15 years of experience in video production and editing, I've worked with some of the world's biggest brands and creators. My passion is transforming raw footage into compelling visual stories that captivate audiences.",
+    "content2": "I specialize in high-end commercial production, music videos, and cinematic content. My technical expertise combined with creative vision has resulted in multiple award-winning projects."
+  },
+  "contact": {
+    "title": "Let's Create Something Amazing",
+    "email": "contact@raju.com",
+    "phone": "+1 (555) 123-4567",
+    "location": "Los Angeles, CA"
+  },
+  "footer": {
+    "copyright": "2026 Raju Productions. All rights reserved.",
+    "tagline": "Premium video editing for visionary clients worldwide"
+  }
+}

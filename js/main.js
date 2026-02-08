@@ -1,3 +1,178 @@
+// ================== DYNAMIC CONTENT LOADING ==================
+
+// Load content from API
+let pageContent = {};
+
+async function loadPageContent() {
+    try {
+        const response = await fetch('/api/content');
+        if (response.ok) {
+            pageContent = await response.json();
+            console.log('✅ Page content loaded successfully');
+            
+            // Validate content structure before updating
+            if (typeof pageContent === 'object' && pageContent !== null) {
+                updatePageContent();
+            } else {
+                console.warn('⚠️ Invalid content structure');
+            }
+        } else {
+            console.error('❌ Failed to fetch content. Status:', response.status);
+        }
+    } catch (err) {
+        console.error('❌ Error loading content:', err);
+        console.log('ℹ️ Using default content');
+    }
+}
+
+function updatePageContent() {
+    // Update hero section
+    if (pageContent.hero) {
+        const heroTitle = document.querySelector('h1.text-5xl');
+        if (heroTitle) {
+            const highlightWord = pageContent.hero.title.split(' ').pop();
+            heroTitle.innerHTML = `Transform Your <span class="gradient-text">${highlightWord}</span> Into Reality`;
+        }
+        
+        const heroSubtitle = document.querySelector('section:nth-of-type(1) p.text-2xl.text-gray-300');
+        if (heroSubtitle) {
+            heroSubtitle.textContent = pageContent.hero.subtitle;
+        }
+    }
+
+    // Update stats
+    if (pageContent.stats && Array.isArray(pageContent.stats)) {
+        const statDivs = document.querySelectorAll('section:nth-of-type(2) .grid > div');
+        pageContent.stats.forEach((stat, index) => {
+            if (statDivs[index]) {
+                const counterDiv = statDivs[index].querySelector('.counter');
+                const labelDiv = statDivs[index].querySelector('p');
+                if (counterDiv) counterDiv.textContent = stat.value;
+                if (labelDiv) labelDiv.textContent = stat.label;
+            }
+        });
+    }
+
+    // Update portfolio section title
+    if (pageContent.portfolio && typeof pageContent.portfolio === 'object') {
+        const portfolioSection = document.getElementById('portfolio');
+        if (portfolioSection) {
+            const portfolioTitle = portfolioSection.querySelector('h2');
+            if (portfolioTitle && pageContent.portfolio.title) {
+                portfolioTitle.innerHTML = `<span class="gradient-text">${pageContent.portfolio.title}</span>`;
+            }
+        }
+
+        // Update portfolio items
+        if (pageContent.portfolio.items && Array.isArray(pageContent.portfolio.items)) {
+            const portfolioGrid = document.getElementById('portfolio-grid');
+            if (portfolioGrid) {
+                const existingItems = portfolioGrid.querySelectorAll('.video-card');
+                existingItems.forEach(item => item.remove());
+                
+                pageContent.portfolio.items.forEach(item => {
+                    const itemHtml = `
+                        <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden hover-lift video-card reveal">
+                            <div class="aspect-video bg-gray-700 flex items-center justify-center">
+                                <i class="fas fa-video text-4xl text-gray-600"></i>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">${item.title}</h3>
+                                <p class="text-gray-400 mb-4">${item.description}</p>
+                                <div class="flex gap-2">
+                                    ${item.tags.map(tag => `<span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    portfolioGrid.innerHTML += itemHtml;
+                });
+            }
+        }
+    }
+
+    // Update services section title
+    if (pageContent.services && typeof pageContent.services === 'object') {
+        const servicesSection = document.getElementById('services');
+        if (servicesSection) {
+            const servicesTitle = servicesSection.querySelector('h2');
+            if (servicesTitle && pageContent.services.title) {
+                servicesTitle.innerHTML = `<span class="gradient-text">${pageContent.services.title}</span>`;
+            }
+        }
+
+        // Update services items
+        if (pageContent.services.items && Array.isArray(pageContent.services.items)) {
+            const servicesGrid = document.getElementById('services-grid');
+            if (servicesGrid) {
+                const existingServices = servicesGrid.querySelectorAll('.glass');
+                existingServices.forEach(service => service.remove());
+                
+                pageContent.services.items.forEach(service => {
+                    const serviceHtml = `
+                        <div class="glass p-8 rounded-xl hover-lift reveal">
+                            <div class="text-4xl mb-4">
+                                <i class="fas ${service.icon} text-blue-400"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">${service.title}</h3>
+                            <p class="text-gray-300 mb-4">${service.description}</p>
+                            <p class="text-blue-400 font-bold">${service.price}</p>
+                        </div>
+                    `;
+                    servicesGrid.innerHTML += serviceHtml;
+                });
+            }
+        }
+    }
+
+    // Update about section
+    if (pageContent.about && typeof pageContent.about === 'object') {
+        const aboutSection = document.getElementById('about');
+        if (aboutSection) {
+            const aboutTitle = aboutSection.querySelector('h2');
+            if (aboutTitle && pageContent.about.title) {
+                aboutTitle.innerHTML = `<span class="gradient-text">${pageContent.about.title}</span>`;
+            }
+
+            const aboutParas = aboutSection.querySelectorAll('p.text-gray-300');
+            if (aboutParas[0] && pageContent.about.content1) aboutParas[0].textContent = pageContent.about.content1;
+            if (aboutParas[1] && pageContent.about.content2) aboutParas[1].textContent = pageContent.about.content2;
+        }
+    }
+
+    // Update contact section
+    if (pageContent.contact && typeof pageContent.contact === 'object') {
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+            const contactTitle = contactSection.querySelector('h2');
+            if (contactTitle && pageContent.contact.title) {
+                contactTitle.innerHTML = `<span class="gradient-text">${pageContent.contact.title}</span>`;
+            }
+
+            const contactInfos = contactSection.querySelectorAll('.grid.grid-cols-3 p');
+            if (contactInfos[0] && pageContent.contact.email) contactInfos[0].textContent = pageContent.contact.email;
+            if (contactInfos[1] && pageContent.contact.phone) contactInfos[1].textContent = pageContent.contact.phone;
+            if (contactInfos[2] && pageContent.contact.location) contactInfos[2].textContent = pageContent.contact.location;
+        }
+    }
+
+    // Update footer
+    if (pageContent.footer && typeof pageContent.footer === 'object') {
+        const footerPs = document.querySelectorAll('footer p');
+        if (footerPs[0] && pageContent.footer.copyright) footerPs[0].textContent = `© ${pageContent.footer.copyright}`;
+        if (footerPs[1] && pageContent.footer.tagline) footerPs[1].textContent = pageContent.footer.tagline;
+    }
+}
+
+// Load content when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadPageContent);
+} else {
+    loadPageContent();
+}
+
+// ================== ORIGINAL FUNCTIONALITY ==================
+
 // Scroll effects
 window.addEventListener('scroll', () => {
     const navbar = document.getElementById('navbar');

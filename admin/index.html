@@ -169,6 +169,10 @@
                     <i class="fas fa-chart-line"></i>
                     <span>Dashboard</span>
                 </a>
+                <a href="#" onclick="showTab('content'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link text-sm md:text-base" data-tab="content">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Content Management</span>
+                </a>
                 <a href="#" onclick="showTab('videos'); closeSidebar();" class="flex items-center space-x-3 px-3 md:px-4 py-2 md:py-3 rounded-lg hover:bg-slate-700 transition tab-link text-sm md:text-base" data-tab="videos">
                     <i class="fas fa-video"></i>
                     <span>Videos</span>
@@ -304,7 +308,157 @@
                     </div>
                 </div>
 
-                <!-- Videos Tab -->
+                <!-- Content Management Tab -->
+                <div id="content-tab" class="tab-content hidden">
+                    <h2 class="text-3xl font-bold mb-8">Content Management</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Hero Section -->
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <i class="fas fa-heading text-blue-400"></i> Hero Section
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Main Title</label>
+                                    <input type="text" id="hero-title" class="form-input w-full px-4 py-2 rounded-lg" placeholder="Main title text">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Subtitle</label>
+                                    <textarea id="hero-subtitle" class="form-input w-full px-4 py-2 rounded-lg" rows="3" placeholder="Subtitle text"></textarea>
+                                </div>
+                                <button onclick="saveSection('hero')" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                                    <i class="fas fa-save mr-2"></i> Save Hero
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stats Section -->
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <i class="fas fa-chart-bar text-purple-400"></i> Stats Section
+                            </h3>
+                            <div id="stats-list" class="space-y-4 mb-4">
+                                <!-- Stats items will be loaded here -->
+                            </div>
+                            <button onclick="saveSection('stats')" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                                <i class="fas fa-save mr-2"></i> Save Stats
+                            </button>
+                        </div>
+
+                        <!-- About Section -->
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <i class="fas fa-user text-cyan-400"></i> About Section
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Title</label>
+                                    <input type="text" id="about-title" class="form-input w-full px-4 py-2 rounded-lg" placeholder="About title">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Content Paragraph 1</label>
+                                    <textarea id="about-content1" class="form-input w-full px-4 py-2 rounded-lg" rows="4" placeholder="First paragraph"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Content Paragraph 2</label>
+                                    <textarea id="about-content2" class="form-input w-full px-4 py-2 rounded-lg" rows="4" placeholder="Second paragraph"></textarea>
+                                </div>
+                                <button onclick="saveSection('about')" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                                    <i class="fas fa-save mr-2"></i> Save About
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Contact Section -->
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <i class="fas fa-envelope text-green-400"></i> Contact Section
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Title</label>
+                                    <input type="text" id="contact-title" class="form-input w-full px-4 py-2 rounded-lg" placeholder="Contact section title">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Email</label>
+                                    <input type="email" id="contact-email" class="form-input w-full px-4 py-2 rounded-lg" placeholder="contact@example.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Phone</label>
+                                    <input type="text" id="contact-phone" class="form-input w-full px-4 py-2 rounded-lg" placeholder="+1 (555) 123-4567">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Location</label>
+                                    <input type="text" id="contact-location" class="form-input w-full px-4 py-2 rounded-lg" placeholder="City, State">
+                                </div>
+                                <button onclick="saveSection('contact')" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                                    <i class="fas fa-save mr-2"></i> Save Contact
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Footer Section -->
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <i class="fas fa-footer text-orange-400"></i> Footer
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Copyright Text</label>
+                                    <input type="text" id="footer-copyright" class="form-input w-full px-4 py-2 rounded-lg" placeholder="Copyright text">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Tagline</label>
+                                    <input type="text" id="footer-tagline" class="form-input w-full px-4 py-2 rounded-lg" placeholder="Tagline">
+                                </div>
+                                <button onclick="saveSection('footer')" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                                    <i class="fas fa-save mr-2"></i> Save Footer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio Section -->
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <i class="fas fa-images text-pink-400"></i> Portfolio Section
+                            </h3>
+                            <div class="space-y-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Section Title</label>
+                                    <input type="text" id="portfolio-section-title" class="form-input w-full px-4 py-2 rounded-lg" placeholder="Featured Works">
+                                </div>
+                            </div>
+                            <div id="portfolio-items-list" class="space-y-4 mb-4 border-t border-slate-600 pt-4">
+                                <!-- Portfolio items will be loaded here -->
+                            </div>
+                            <button onclick="saveSection('portfolio')" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                                <i class="fas fa-save mr-2"></i> Save Portfolio
+                            </button>
+                        </div>
+
+                        <!-- Services Section -->
+                        <div class="admin-card p-6 rounded-xl">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <i class="fas fa-briefcase text-red-400"></i> Services Section
+                            </h3>
+                            <div class="space-y-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Section Title</label>
+                                    <input type="text" id="services-section-title" class="form-input w-full px-4 py-2 rounded-lg" placeholder="Premium Services">
+                                </div>
+                            </div>
+                            <div id="services-items-list" class="space-y-4 mb-4 border-t border-slate-600 pt-4">
+                                <!-- Services items will be loaded here -->
+                            </div>
+                            <button onclick="saveSection('services')" class="btn-primary px-6 py-2 rounded-lg font-semibold hover:text-white">
+                                <i class="fas fa-save mr-2"></i> Save Services
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                
                 <div id="videos-tab" class="tab-content hidden">
                     <div class="flex justify-between items-center mb-8">
                         <h2 class="text-3xl font-bold">Video Management</h2>

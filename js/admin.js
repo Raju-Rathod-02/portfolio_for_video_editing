@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPortfolioList();
     loadServicesList();
     loadContactsList();
+    loadAllContent();
     setupEventListeners();
     updateActivityDisplay();
 });
@@ -50,6 +51,7 @@ function showTab(tabName) {
     // Update page title
     const titles = {
         'dashboard': 'Dashboard',
+        'content': 'Content Management',
         'videos': 'Video Management',
         'portfolio': 'Portfolio Management',
         'services': 'Services Management',
@@ -782,4 +784,212 @@ setInterval(() => {
     const videos = JSON.parse(localStorage.getItem('uploadedVideos')) || [];
     localStorage.setItem('syncVideos', JSON.stringify(videos));
 }, 5000);
+
+// =============================================
+// CONTENT MANAGEMENT
+// =============================================
+
+let contentData = {};
+
+// Load all content on page init
+async function loadAllContent() {
+    try {
+        const response = await fetch('/api/content');
+        if (response.ok) {
+            contentData = await response.json();
+            console.log('✅ Content loaded:', contentData);
+            populateContentForms();
+        }
+    } catch (err) {
+        console.error('❌ Error loading content:', err);
+    }
+}
+
+// Populate all form fields with current content
+function populateContentForms() {
+    // Hero Section
+    if (contentData.hero) {
+        document.getElementById('hero-title').value = contentData.hero.title || '';
+        document.getElementById('hero-subtitle').value = contentData.hero.subtitle || '';
+    }
+
+    // Stats
+    if (contentData.stats) {
+        const statsList = document.getElementById('stats-list');
+        statsList.innerHTML = '';
+        contentData.stats.forEach((stat, index) => {
+            const div = document.createElement('div');
+            div.className = 'p-4 bg-slate-700/50 rounded-lg';
+            div.innerHTML = `
+                <label class="block text-xs font-semibold mb-2">Stat ${index + 1}</label>
+                <div class="flex gap-2 mb-2">
+                    <input type="text" data-stat-field="value" data-stat-id="${stat.id}" value="${stat.value || ''}" class="form-input flex-1 px-3 py-2 rounded text-sm" placeholder="e.g. 500+">
+                    <input type="text" data-stat-field="label" data-stat-id="${stat.id}" value="${stat.label || ''}" class="form-input flex-1 px-3 py-2 rounded text-sm" placeholder="e.g. Projects Completed">
+                </div>
+            `;
+            statsList.appendChild(div);
+        });
+    }
+
+    // About Section
+    if (contentData.about) {
+        document.getElementById('about-title').value = contentData.about.title || '';
+        document.getElementById('about-content1').value = contentData.about.content1 || '';
+        document.getElementById('about-content2').value = contentData.about.content2 || '';
+    }
+
+    // Contact Section
+    if (contentData.contact) {
+        document.getElementById('contact-title').value = contentData.contact.title || '';
+        document.getElementById('contact-email').value = contentData.contact.email || '';
+        document.getElementById('contact-phone').value = contentData.contact.phone || '';
+        document.getElementById('contact-location').value = contentData.contact.location || '';
+    }
+
+    // Footer
+    if (contentData.footer) {
+        document.getElementById('footer-copyright').value = contentData.footer.copyright || '';
+        document.getElementById('footer-tagline').value = contentData.footer.tagline || '';
+    }
+
+    // Portfolio
+    if (contentData.portfolio) {
+        document.getElementById('portfolio-section-title').value = contentData.portfolio.title || '';
+        
+        const portfolioList = document.getElementById('portfolio-items-list');
+        portfolioList.innerHTML = '';
+        if (contentData.portfolio.items) {
+            contentData.portfolio.items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'p-3 bg-slate-700/50 rounded-lg';
+                div.innerHTML = `
+                    <label class="block text-xs font-semibold mb-2">Portfolio Item ${index + 1}</label>
+                    <input type="text" data-portfolio-field="title" data-portfolio-id="${item.id}" value="${item.title || ''}" class="form-input w-full px-3 py-2 rounded text-sm mb-2" placeholder="Item title">
+                    <textarea data-portfolio-field="description" data-portfolio-id="${item.id}" class="form-input w-full px-3 py-2 rounded text-sm mb-2" placeholder="Item description">${item.description || ''}</textarea>
+                    <input type="text" data-portfolio-field="tags" data-portfolio-id="${item.id}" value="${item.tags ? item.tags.join(', ') : ''}" class="form-input w-full px-3 py-2 rounded text-sm" placeholder="Tags (comma-separated)">
+                `;
+                portfolioList.appendChild(div);
+            });
+        }
+    }
+
+    // Services
+    if (contentData.services) {
+        document.getElementById('services-section-title').value = contentData.services.title || '';
+        
+        const servicesList = document.getElementById('services-items-list');
+        servicesList.innerHTML = '';
+        if (contentData.services.items) {
+            contentData.services.items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'p-3 bg-slate-700/50 rounded-lg';
+                div.innerHTML = `
+                    <label class="block text-xs font-semibold mb-2">Service ${index + 1}</label>
+                    <input type="text" data-service-field="title" data-service-id="${item.id}" value="${item.title || ''}" class="form-input w-full px-3 py-2 rounded text-sm mb-2" placeholder="Service title">
+                    <textarea data-service-field="description" data-service-id="${item.id}" class="form-input w-full px-3 py-2 rounded text-sm mb-2" placeholder="Service description">${item.description || ''}</textarea>
+                    <input type="text" data-service-field="price" data-service-id="${item.id}" value="${item.price || ''}" class="form-input w-full px-3 py-2 rounded text-sm" placeholder="Price e.g. $2000 - $5000">
+                `;
+                servicesList.appendChild(div);
+            });
+        }
+    }
+}
+
+// Save section content
+async function saveSection(section) {
+    let data = {};
+
+    switch(section) {
+        case 'hero':
+            data = {
+                title: document.getElementById('hero-title').value,
+                subtitle: document.getElementById('hero-subtitle').value
+            };
+            break;
+        case 'stats':
+            data = [];
+            document.querySelectorAll('[data-stat-field]').forEach(input => {
+                const statId = parseInt(input.dataset.statId);
+                const field = input.dataset.statField;
+                const existing = data.find(s => s.id === statId) || { id: statId };
+                existing[field] = input.value;
+                if (!data.find(s => s.id === statId)) {
+                    data.push(existing);
+                }
+            });
+            break;
+        case 'about':
+            data = {
+                title: document.getElementById('about-title').value,
+                content1: document.getElementById('about-content1').value,
+                content2: document.getElementById('about-content2').value
+            };
+            break;
+        case 'contact':
+            data = {
+                title: document.getElementById('contact-title').value,
+                email: document.getElementById('contact-email').value,
+                phone: document.getElementById('contact-phone').value,
+                location: document.getElementById('contact-location').value
+            };
+            break;
+        case 'footer':
+            data = {
+                copyright: document.getElementById('footer-copyright').value,
+                tagline: document.getElementById('footer-tagline').value
+            };
+            break;
+        case 'portfolio':
+            data.title = document.getElementById('portfolio-section-title').value;
+            data.items = [];
+            document.querySelectorAll('[data-portfolio-field]').forEach(input => {
+                const itemId = parseInt(input.dataset.portfolioId);
+                const field = input.dataset.portfolioField;
+                const existing = data.items.find(i => i.id === itemId) || { id: itemId };
+                if (field === 'tags') {
+                    existing[field] = input.value.split(',').map(t => t.trim()).filter(t => t);
+                } else {
+                    existing[field] = input.value;
+                }
+                if (!data.items.find(i => i.id === itemId)) {
+                    data.items.push(existing);
+                }
+            });
+            break;
+        case 'services':
+            data.title = document.getElementById('services-section-title').value;
+            data.items = [];
+            document.querySelectorAll('[data-service-field]').forEach(input => {
+                const itemId = parseInt(input.dataset.serviceId);
+                const field = input.dataset.serviceField;
+                const existing = data.items.find(i => i.id === itemId) || { id: itemId };
+                existing[field] = input.value;
+                if (!data.items.find(i => i.id === itemId)) {
+                    data.items.push(existing);
+                }
+            });
+            break;
+    }
+
+    try {
+        const response = await fetch(`/api/content/${section}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log(`✅ ${section} saved successfully`);
+            alert(`${section.charAt(0).toUpperCase() + section.slice(1)} saved successfully!`);
+            contentData[section] = result.data;
+            addActivity(`Updated ${section} content`);
+        } else {
+            alert('Error saving content. Please try again.');
+        }
+    } catch (err) {
+        console.error(`❌ Error saving ${section}:`, err);
+        alert(`Error saving ${section}`);
+    }
+}
 
